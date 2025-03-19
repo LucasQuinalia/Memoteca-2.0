@@ -1,12 +1,25 @@
 const URL_BASE = 'http://localhost:3000'
 
+const connverterStringParaDara = (dataString) => {
+    const [ano, mes, dia] = dataString.split('-')
+    //2024-08-12 = [2024, 8, 12]
+    return new Date(Date.UTC(ano, mes - 1, dia))
+}
+
 const api = {
     async buscarPensamentos() {
         try {
-            //const response = await axios.get(`${URL_BASE}/pensamentos`)
-            const response = await fetch(`${URL_BASE}/pensamentos`)
-            //return await response.data
-            return await response.json()
+            //const response = await fetch(`${URL_BASE}/pensamentos`)
+            //return await response.json()
+            const response = await axios.get(`${URL_BASE}/pensamentos`)
+            const pensamentos = await response.data
+
+            return pensamentos.map(pensamento => {
+                return {
+                    ...pensamento,
+                    data: new Date(pensamento.data)
+                }
+            })
         } catch {
             alert('Erro ao buscar pensamentos')
             throw error
@@ -15,16 +28,21 @@ const api = {
 
     async salvarPensamento(pensamento) {
         try {
-            //const response = await axios.post(`${URL_BASE}/pensamentos`, pensamento}
-            const response = await fetch(`${URL_BASE}/pensamentos`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(pensamento)
+            //const response = await fetch(`${URL_BASE}/pensamentos`, {
+            //    method: 'POST',
+            //    headers: {
+            //        'Content-Type': 'application/json'
+            //    },
+            //    body: JSON.stringify(pensamento)
+            //})
+            //return await response.json()
+
+            const data = connverterStringParaDara(pensamento.data)
+            const response = await axios.post(`${URL_BASE}/pensamentos`, {
+                ...pensamento,
+                data: data.toISOString()
             })
-            //return await response.data
-            return await response.json()
+            return await response.data
         } catch {
             alert('Erro ao salvar pensamento')
             throw error
@@ -33,10 +51,15 @@ const api = {
 
     async buscarPensamentoPorId(id) {
         try {
-            //const response = await axios.get(`${URL_BASE}/pensamentos/${id}`)
-            const response = await fetch(`${URL_BASE}/pensamentos/${id}`)
-            //return await response.data
-            return await response.json()
+            //const response = await fetch(`${URL_BASE}/pensamentos/${id}`)
+            //const pensamento = await response.json()
+            const response = await axios.get(`${URL_BASE}/pensamentos/${id}`)
+            const pensamento = await response.data
+
+            return {
+                ...pensamento,
+                data: new Date(pensamento.data)
+            }
         } catch {
             alert('Erro ao buscar pensamento')
             throw error
