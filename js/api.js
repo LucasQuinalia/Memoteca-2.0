@@ -68,7 +68,7 @@ const api = {
 
     async editarPensamento(pensamento) {
         try {
-            //const response = await axios.put(`${URL_BASE}/pensamentos`, pensamento}
+            //const response = await axios.put(`${URL_BASE}/pensamentos/${pensamento.id}`, pensamento}
             const response = await fetch(`http://localhost:3000/pensamentos/${pensamento.id}`, {
                 method: 'PUT',
                 headers: {
